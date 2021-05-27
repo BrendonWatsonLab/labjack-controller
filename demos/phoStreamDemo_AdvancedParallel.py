@@ -136,8 +136,12 @@ connection_type = "USB"
 duration = 15  # seconds
 freq = 100  # sampling frequency in Hz
 # channels = ["AIN0", "AIN1", "AIN2", "AIN3"]
-channels = ["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3"]
-analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
+# channels = ["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3"] # Pho Home Testing Port Config
+channels = ["EIO0", "EIO1", "EIO2", "EIO3", "EIO4", "EIO5", "EIO6", "EIO7", "AIN0"] # BB-16 Port config
+num_channels = len(channels)
+
+# analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
+analog_voltages = [10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
 
 # BaseManagers can be used to share complex objects, attributes and all, across multiple processes.
 BaseManager.register('LabjackReader', LabjackReader)
