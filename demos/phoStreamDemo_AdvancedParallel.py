@@ -1,3 +1,12 @@
+# Pho Hale, 05-26-2021 @ 10:12pm
+# This file opens a stream to a Labjack T7 connected over USB, reading its specified pins at a high frequency for the specified duration.
+# It makes use of the labjack-controller 3rd party python library: https://labjack-controller.readthedocs.io/en/latest/
+
+
+# Potential next steps:
+# Integrate LabStreamingReciever to enable asynchronous writes out to .csv and updating of a plot:  https://github.com/CommanderPho/PhoLabStreamingReceiver/blob/master/PhoLabStreamingReceiver.py
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from labjackcontroller.labtools import LabjackReader
