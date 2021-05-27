@@ -9,7 +9,8 @@ import time
 
 from bokeh.models.widgets import DataTable, TableColumn
 from bokeh.models import ColumnDataSource
-from bokeh.palettes import Spectral6
+# from bokeh.palettes import SpectralColorScheme, Spectral9
+from bokeh.palettes import Spectral11 as SpectralColorScheme
 from bokeh.plotting import figure, show, gridplot
 
 ## Function definitions:
@@ -59,12 +60,17 @@ def plotResultFrame(df):
     return time_fig
 
 
-def advancedPlotResultFrame(df):
+def advancedPlotResultFrame(df, ports):
     # Creates an advanced plot that shows the state of signals logged during the run
     fig_width = 800
     tools = ["box_select", "box_zoom", "hover", "reset"]
 
-    datarun_source = ColumnDataSource(datarun[4:])
+    # ports = ["AIN0", "AIN1", "AIN2", "AIN3"]
+    num_ports = len(ports)
+    subplot_height = num_ports * 100
+
+
+    datarun_source = ColumnDataSource(datarun[num_ports:])
     # Table plot
     Columns = [TableColumn(field=Ci, title=Ci) for Ci in datarun.columns]  # bokeh columns
     data_table = DataTable(columns=Columns, source=datarun_source, width=fig_width)  # bokeh table
@@ -74,29 +80,31 @@ def advancedPlotResultFrame(df):
                     x_axis_label="Device Time (sec)", y_axis_label="System Time (Sec)", tools=tools)
     time_fig.line(source=datarun_source, x="Time", y="System Time")
 
-    # AIN0..3 vs device time graph
-    data_time_fig = figure(plot_width=fig_width, plot_height=400, title="AIN0-3 vs Device Time",
+    # AIN0..N vs device time graph
+    data_time_fig = figure(plot_width=fig_width, plot_height=subplot_height, title="AIN0-N vs Device Time",
                         x_axis_label="Device Time (sec)", y_axis_label="Voltage (V)", tools=tools)
-    for i, column in enumerate(["AIN0", "AIN1", "AIN2", "AIN3"]):
-        data_time_fig.line(source=datarun_source, x="Time", y=column, line_width=1, color=Spectral6[i + 2],
-                        alpha=0.8, muted_color=Spectral6[i + 2], muted_alpha=0.075,
+    for i, column in enumerate(ports):
+        data_time_fig.line(source=datarun_source, x="Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
+                        alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
                         legend=column + " Column")
-        data_time_fig.circle(source=datarun_source, x="Time", y=column, line_width=1, color=Spectral6[i + 2],
-                            alpha=0.8, muted_color=Spectral6[i + 2], muted_alpha=0.075,
+        data_time_fig.circle(source=datarun_source, x="Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
+                            alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
                             legend=column + " Column", size=1)
 
+
+    # data_time_fig.x_range.start = x
     data_time_fig.legend.location = "top_left"
     data_time_fig.legend.click_policy="mute"
 
-    # AIN0..3 vs system time graph
-    data_sys_time_fig = figure(plot_width=fig_width, plot_height=400, title="AIN0-3 vs System Time",
+    # AIN0..N vs system time graph
+    data_sys_time_fig = figure(plot_width=fig_width, plot_height=subplot_height, title="AIN0-N vs System Time",
                             x_axis_label="System Time (sec)", y_axis_label="Voltage (V)", tools=tools)
-    for i, column in enumerate(["AIN0", "AIN1", "AIN2", "AIN3"]):
-        data_sys_time_fig.line(source=datarun_source, x="Time", y=column, line_width=1, color=Spectral6[i + 2],
-                            alpha=0.8, muted_color=Spectral6[i + 2], muted_alpha=0.075,
+    for i, column in enumerate(ports):
+        data_sys_time_fig.line(source=datarun_source, x="System Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
+                            alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
                             legend=column + " Column")
-        data_sys_time_fig.circle(source=datarun_source, x="Time", y=column, line_width=1, color=Spectral6[i + 2],
-                                alpha=0.8, muted_color=Spectral6[i + 2], muted_alpha=0.075,
+        data_sys_time_fig.circle(source=datarun_source, x="System Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
+                                alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
                                 legend=column + " Column", size=1)
 
     data_sys_time_fig.legend.location = "top_left"
@@ -127,8 +135,9 @@ device_type = "T7"
 connection_type = "USB"
 duration = 15  # seconds
 freq = 100  # sampling frequency in Hz
-channels = ["AIN0", "AIN1", "AIN2", "AIN3"]
-voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input voltages from -10 to 10 volts
+# channels = ["AIN0", "AIN1", "AIN2", "AIN3"]
+channels = ["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3"]
+analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
 
 # BaseManagers can be used to share complex objects, attributes and all, across multiple processes.
 BaseManager.register('LabjackReader', LabjackReader)
@@ -143,7 +152,7 @@ if __name__ == '__main__':
     ## declare the functions we want to run in parallel:
     #    Declare a data-gathering process
     data_proc = Process(target=my_lj.collect_data,
-                        args=(channels, voltages, duration, freq),
+                        args=(channels, analog_voltages, duration, freq),
                         kwargs={'resolution': 1, 'scans_per_read': 1})
 
     #    Declare a data backup process
@@ -161,8 +170,15 @@ if __name__ == '__main__':
     backup_proc.join()
 
     datarun = my_lj.to_dataframe()
+    # Get all data recorded as a 2D Numpy array
+    my_data = my_lj.to_array()
 
-    advancedPlotResultFrame(datarun)
+    # Explicitly close the connection?
+    # We do need to explicitly close the connection when we don't want it anymore.
+    my_lj.close()
+
+
+    advancedPlotResultFrame(datarun, channels)
 
 
 
@@ -170,9 +186,9 @@ if __name__ == '__main__':
     # start = time.time_ns()
 
     # with LabjackReader("T7") as my_lj:
-    #     my_lj.collect_data(channels, voltages, duration, frequency)
+    #     my_lj.collect_data(channels, analog_voltages, duration, frequency)
 
-    #     # my_lj.collect_data(channels, voltages, duration, frequency, 
+    #     # my_lj.collect_data(channels, analog_voltages, duration, frequency, 
     #     #                     callback_function=print_row, num_threads=16)
 
     #     datarun_source = my_lj.to_dataframe()
