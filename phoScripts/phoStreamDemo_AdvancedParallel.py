@@ -47,15 +47,18 @@ num_channels = len(channels)
 analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
 # analog_voltages = [10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
 
+# Setup CSV Outputs:
+csv_header_columns = channels.copy()
+csv_header_columns.extend(["TIME","SYSTEM_TIME"])
+# csv_header_columns = ["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3", "TIME","SYSTEM_TIME"]
+
+# columns_string = ','.join(csv_header_columns)
+# columns_string = "{},TIME,SYSTEM_TIME".format(','.join(channels))
+
 # BaseManagers can be used to share complex objects, attributes and all, across multiple processes.
 BaseManager.register('LabjackReader', LabjackReader)
 
-# Setup CSV Outputs:
-csv_header_columns = channels
-csv_header_columns.extend(['TIME','SYSTEM_TIME'])
 
-columns_string = ','.join(csv_header_columns)
-# columns_string = "{},TIME,SYSTEM_TIME".format(','.join(channels))
 
 
 
