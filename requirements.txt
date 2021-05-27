@@ -3,3 +3,6 @@ numpy
 pandas
 colorama
 labjack-ljm
+scipy
+matplotlib
+bokeh

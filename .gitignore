@@ -1,2 +1,6 @@
 ﻿*.pkl
 demos/*.html
+.idea
+.vscode
+**/__pycache__
+phoScripts/final_backup.csv
