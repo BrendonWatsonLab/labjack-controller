@@ -7,8 +7,17 @@ from labjackcontroller.labtools import LabjackReader
 duration = 10  # seconds
 frequency = 100  # sampling frequency in Hz
 channels = ["AIN0", "AIN1", "DIO1"]  # read Analog INput 0, Digital INput 1.
-
 analog_voltages = [10.0]  # i.e. read input voltages from -10 to 10 volts
+
+device_type = "T7"
+connection_type = "USB"
+duration = 180  # seconds
+freq = 100  # sampling frequency in Hz
+channels = ["AIN0", "AIN1", "AIN2", "AIN3"]
+voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input voltages from -10 to 10 volts
+
+
+
 
 def print_row(row):
     print(row)
