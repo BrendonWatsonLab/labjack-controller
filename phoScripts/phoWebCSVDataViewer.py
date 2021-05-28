@@ -111,11 +111,12 @@ for i, column_name in enumerate(data_columns):
 	TOOLS = [PanTool(dimensions = 'width'), HoverTool(tooltips = [("Date", "@x")]), WheelZoomTool(dimensions = 'width'), ResetTool()]
 
 
-	curr_fig = figure(plot_width=1024, plot_height=100, title=None, tools=TOOLS)
+	curr_fig = figure(plot_width=1024, plot_height=100, title=column_name, tools=TOOLS)
+
 	curr_line = curr_fig.line([], [], color="firebrick", line_width=2)
 	curr_ds = curr_line.data_source
 
-	curr_fig.yaxis.axis_label = column_name
+	# curr_fig.yaxis.axis_label = column_name
 
 	curr_fig.axis.visible = False
 	curr_fig.ygrid.visible = False
