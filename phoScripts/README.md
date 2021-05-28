@@ -1,6 +1,10 @@
-## Installing:
+
+# Installing:
+conda env create -f phoScripts\environment.yml
+pip install -r phoScripts\pip_requirements.txt
 
 
+# Running:
 
 ### Open two Anaconda Consoles and change the environment to labjack-controller
 `conda activate labjack-controller`
