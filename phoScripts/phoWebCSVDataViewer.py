@@ -38,76 +38,6 @@ csv_watch_path = "STREAMING_CSV.csv"
 
 ## Function definitions:
 
-def print_row(row):
-    print(row)
-
-def plotResultFrame(df):
-    fig_width = 800
-    tools = ["box_select", "box_zoom", "hover", "reset"]
-    datarun_source = ColumnDataSource(my_lj.to_dataframe()[4:])
-    time_fig = figure(plot_width=fig_width, title="Time vs. System Time",
-                    x_axis_label="Device Time (sec)", y_axis_label="System Time (Sec)", tools=tools)
-    time_fig.line(source=datarun_source, x="Time", y="System Time")
-
-    show(time_fig)
-    return time_fig
-
-
-def advancedPlotResultFrame(df, ports):
-    # Creates an advanced plot that shows the state of signals logged during the run
-    fig_width = 800
-    tools = ["box_select", "box_zoom", "hover", "reset"]
-
-    # ports = ["AIN0", "AIN1", "AIN2", "AIN3"]
-    num_ports = len(ports)
-    subplot_height = num_ports * 100
-
-
-    datarun_source = ColumnDataSource(datarun[num_ports:])
-    # Table plot
-    Columns = [TableColumn(field=Ci, title=Ci) for Ci in datarun.columns]  # bokeh columns
-    data_table = DataTable(columns=Columns, source=datarun_source, width=fig_width)  # bokeh table
-
-    # Time graph
-    time_fig = figure(plot_width=fig_width, title="Time vs. System Time",
-                    x_axis_label="Device Time (sec)", y_axis_label="System Time (Sec)", tools=tools)
-    time_fig.line(source=datarun_source, x="Time", y="System Time")
-
-    # AIN0..N vs device time graph
-    data_time_fig = figure(plot_width=fig_width, plot_height=subplot_height, title="AIN0-N vs Device Time",
-                        x_axis_label="Device Time (sec)", y_axis_label="Voltage (V)", tools=tools)
-    for i, column in enumerate(ports):
-        data_time_fig.line(source=datarun_source, x="Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
-                        alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
-                        legend=column + " Column")
-        data_time_fig.circle(source=datarun_source, x="Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
-                            alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
-                            legend=column + " Column", size=1)
-
-
-    # data_time_fig.x_range.start = x
-    data_time_fig.legend.location = "top_left"
-    data_time_fig.legend.click_policy="mute"
-
-    # AIN0..N vs system time graph
-    data_sys_time_fig = figure(plot_width=fig_width, plot_height=subplot_height, title="AIN0-N vs System Time",
-                            x_axis_label="System Time (sec)", y_axis_label="Voltage (V)", tools=tools)
-    for i, column in enumerate(ports):
-        data_sys_time_fig.line(source=datarun_source, x="System Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
-                            alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
-                            legend=column + " Column")
-        data_sys_time_fig.circle(source=datarun_source, x="System Time", y=column, line_width=1, color=SpectralColorScheme[i + 2],
-                                alpha=0.8, muted_color=SpectralColorScheme[i + 2], muted_alpha=0.075,
-                                legend=column + " Column", size=1)
-
-    data_sys_time_fig.legend.location = "top_left"
-    data_sys_time_fig.legend.click_policy="mute"
-
-    # Organize and show all plots.
-    p = gridplot([[data_sys_time_fig], [data_time_fig], [data_table], [time_fig]])
-
-    show(p)
-
 ## Live Plotting Functions:
 
 def addLinkedCrosshairs(plots):
@@ -196,6 +126,8 @@ for i, column_name in enumerate(data_columns):
 	curr_fig.ygrid.band_fill_alpha = 0.1
 	curr_fig.ygrid.band_fill_color = "navy"
 
+	curr_fig.x_range.follow = "end"
+
 	if not curr_is_first_fig:
 		# Set the x_range for this figure to that of the first figure:
 		curr_fig.x_range = figure_list[0].x_range
@@ -266,7 +198,7 @@ def update_live_plot(step):
 ## Build Live Plot:
 # curdoc().add_root(p)
 
-curdoc().add_root(column(figure_list))
+curdoc().add_root(column(figure_list, merge_tools=True))
 
 
 # Add a periodic callback to be run every 2000 milliseconds
