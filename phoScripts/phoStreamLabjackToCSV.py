@@ -54,13 +54,15 @@ def backup(labjack: LabjackReader, basename: str, num_seconds: int) -> None:
 		if (len(curr_df.columns) > 2):
 			# Convert the analog columns into digital
 			# print("test channels access: {}\n should_discretize: {}".format(channels, should_discretize_analog_channel))
-			## TODO: See https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy to fix annoying error
-			sub_df = curr_df.iloc[:, 0:4] # TODO: hardcoded the analog channels 0:4
-			# print("test: {}".format(sub_df))
-			found_idx = sub_df.gt(2.5).copy()
-			# This should update curr_df too, since sub_df is not a copy
-			sub_df.iloc[found_idx] = 1
-			sub_df.iloc[~found_idx] = 0
+			if is_pho_home_config:
+				## TODO: See https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy to fix annoying error
+				sub_df = curr_df.iloc[:, 0:4] # TODO: hardcoded the analog channels 0:4
+				# print("test: {}".format(sub_df))
+				found_idx = sub_df.gt(2.5).copy()
+				# This should update curr_df too, since sub_df is not a copy
+				sub_df.iloc[found_idx] = 1
+				sub_df.iloc[~found_idx] = 0
+			
 			# curr_df.to_pickle(basename + '.pkl')
 			csv_output_final_filename = basename + '.csv'
 
@@ -90,13 +92,17 @@ connection_type = "USB"
 duration = 90  # seconds
 freq = 100  # sampling frequency in Hz
 
+
+
 ## BB-16 config:
-# channels = ["EIO0", "EIO1", "EIO2", "EIO3", "EIO4", "EIO5", "EIO6", "EIO7", "AIN0"] # BB-16 Port config
-# analog_voltages = [10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
+is_pho_home_config = False
+channels = ["EIO0", "EIO1", "EIO2", "EIO3", "EIO4", "EIO5", "EIO6", "EIO7", "AIN0"] # BB-16 Port config
+analog_voltages = [10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
 
 ## Pho Home Testing Config:
-channels = ["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3"] # Pho Home Testing Port Config
-analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
+# is_pho_home_config = True
+# channels = ["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3"] # Pho Home Testing Port Config
+# analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
 
 num_channels = len(channels)
 
