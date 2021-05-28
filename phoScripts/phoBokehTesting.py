@@ -21,9 +21,10 @@ from bokeh.models import ColumnDataSource
 # from bokeh.palettes import SpectralColorScheme, Spectral9
 from bokeh.palettes import Spectral11 as SpectralColorScheme
 from bokeh.plotting import figure, show, gridplot, curdoc
-# from bokeh.driving import linear
+from bokeh.driving import linear
 
-from random import random
+# from random import random
+from random import random, randint
 
 ## Function definitions:
 
@@ -99,36 +100,36 @@ def advancedPlotResultFrame(df, ports):
 
 ## Live Plotting Functions:
 
-
+# aapl = pd.read_csv(data_paths[0])
 
 
 
 ##
 #################### END FUNCTION DEFININTIONS BLOCK
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    p = figure(plot_width=400, plot_height=400)
-    r1 = p.line([], [], color="firebrick", line_width=2)
-    r2 = p.line([], [], color="navy", line_width=2)
+p = figure(plot_width=400, plot_height=400)
+r1 = p.line([], [], color="firebrick", line_width=2)
+r2 = p.line([], [], color="navy", line_width=2)
 
-    ds1 = r1.data_source
-    ds2 = r2.data_source
+ds1 = r1.data_source
+ds2 = r2.data_source
 
-    # @linear()
-    def update_live_plot(step):
-        ds1.data['x'].append(step)
-        ds1.data['y'].append(random.randint(0,100))
-        ds2.data['x'].append(step)
-        ds2.data['y'].append(random.randint(0,100))  
-        ds1.trigger('data', ds1.data, ds1.data)
-        ds2.trigger('data', ds2.data, ds2.data)
+@linear()
+def update_live_plot(step):
+	ds1.data['x'].append(step)
+	ds1.data['y'].append(randint(0,100))
+	ds2.data['x'].append(step)
+	ds2.data['y'].append(randint(0,100))  
+	ds1.trigger('data', ds1.data, ds1.data)
+	ds2.trigger('data', ds2.data, ds2.data)
 
-    ## Build Live Plot:
-    curdoc().add_root(p)
+## Build Live Plot:
+curdoc().add_root(p)
 
-    # Add a periodic callback to be run every 500 milliseconds
-    curdoc().add_periodic_callback(update_live_plot, 500)
+# Add a periodic callback to be run every 500 milliseconds
+curdoc().add_periodic_callback(update_live_plot, 500)
 
 
 
