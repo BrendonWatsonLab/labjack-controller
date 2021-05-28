@@ -1,3 +1,4 @@
+# phoWebCSVDataViewer.py
 # Pho Hale, 05-27-2021 @ 4:04pm
 # This file opens a stream to a Labjack T7 connected over USB, reading its specified pins at a high frequency for the specified duration.
 # It makes use of the labjack-controller 3rd party python library: https://labjack-controller.readthedocs.io/en/latest/
@@ -32,7 +33,8 @@ from bokeh.layouts import column
 # from random import random
 from random import random, randint
 
-csv_watch_path = "C:/Users/Pho/repos/labjack-controller/backup.csv"
+# csv_watch_path = "C:/Users/Pho/repos/labjack-controller/backup.csv"
+csv_watch_path = "STREAMING_CSV.csv"
 
 ## Function definitions:
 
@@ -164,14 +166,7 @@ def add_vlinked_crosshairs(figs):
 read_df = pd.read_csv(csv_watch_path)
 data_columns = read_df.columns[:-2].values # Get all but the last two elements, which are the times
 num_columns = len(data_columns)
-print(data_columns)
-
-# p = figure(plot_width=1024, plot_height=400, y_range=data_columns)
-# r1 = p.line([], [], color="firebrick", line_width=2)
-# r2 = p.line([], [], color="navy", line_width=2)
-
-# ds1 = r1.data_source
-# ds2 = r2.data_source
+# print(data_columns)
 
 figure_list = list()
 datasource_list = list()
