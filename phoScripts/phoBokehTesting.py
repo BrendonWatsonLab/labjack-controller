@@ -22,6 +22,7 @@ from bokeh.models import ColumnDataSource
 from bokeh.palettes import Spectral11 as SpectralColorScheme
 from bokeh.plotting import figure, show, gridplot, curdoc
 from bokeh.driving import linear
+from bokeh.layouts import column
 
 # from random import random
 from random import random, randint
@@ -111,12 +112,32 @@ def advancedPlotResultFrame(df, ports):
 
 # if __name__ == '__main__':
 
-p = figure(plot_width=400, plot_height=400)
-r1 = p.line([], [], color="firebrick", line_width=2)
-r2 = p.line([], [], color="navy", line_width=2)
+# p = figure(plot_width=1024, plot_height=400)
 
-ds1 = r1.data_source
-ds2 = r2.data_source
+# Read CSV to start to get the names
+read_df = pd.read_csv(csv_watch_path)
+data_columns = read_df.columns[:-2].values # Get all but the last two elements, which are the times
+print(data_columns)
+
+# p = figure(plot_width=1024, plot_height=400, y_range=data_columns)
+# r1 = p.line([], [], color="firebrick", line_width=2)
+# r2 = p.line([], [], color="navy", line_width=2)
+
+# ds1 = r1.data_source
+# ds2 = r2.data_source
+
+figure_list = list()
+datasource_list = list()
+
+# Multi figure version:
+for column_name in data_columns:
+	curr_fig = figure(plot_width=1024, plot_height=100, title=column_name)
+	curr_line = curr_fig.line([], [], color="firebrick", line_width=2)
+	curr_ds = curr_line.data_source
+
+	figure_list.append(curr_fig)
+	datasource_list.append(curr_ds)
+
 
 # @linear()
 # def update_live_plot(step):
@@ -132,24 +153,49 @@ ds2 = r2.data_source
 def update_live_plot(step):
 	read_df = pd.read_csv(csv_watch_path)
 
-	print(read_df.columns)
+	# print(read_df.columns)
+	data_columns = read_df.columns[:-2].values # Get all but the last two elements, which are the times
+	num_columns = len(data_columns)
+
+	# print(data_columns)
+	# print(data_columns)
 	# Get python dictionary from dataframe:
-	new_data = dict()
-	new_data['x'] = read_df['System Time']
-	new_data['y'] = read_df['AIN0']
+	# new_data = dict()
+	# new_data['x'] = read_df['System Time']
+	# new_data['y'] = read_df['AIN0']
+	# # new_data['y'] = read_df[['AIN0','AIN1']]
+	# ds1.data = new_data
 
-	ds1.data = new_data
+	# new_data = dict()
+	# new_data['x'] = read_df['System Time']
+	# # new_data['y'] = read_df['AIN0']
+	# new_data['y'] = read_df['AIN1']
+	# ds1.data = new_data
 
-	# ds1.data['x'].append(step)
-	# ds1.data['y'].append(randint(0,100))
-	# ds2.data['x'].append(step)
-	# ds2.data['y'].append(randint(0,100))  
-	ds1.trigger('data', ds1.data, ds1.data)
-	ds2.trigger('data', ds2.data, ds2.data)
+	# # ds1.data['x'].append(step)
+	# # ds1.data['y'].append(randint(0,100))
+	# # ds2.data['x'].append(step)
+	# # ds2.data['y'].append(randint(0,100))  
+	# ds1.trigger('data', ds1.data, ds1.data)
+	# ds2.trigger('data', ds2.data, ds2.data)
+
+
+	# for column_name in data_columns:
+	# for i in range(num_columns):
+	for i, curr_col_name in enumerate(data_columns):
+		# curr_col_name = data_columns[i]
+		curr_new_data = dict()
+		curr_new_data['x'] = read_df['System Time']
+		curr_new_data['y'] = read_df[curr_col_name]
+		datasource_list[i].data = curr_new_data
+		datasource_list[i].trigger('data', datasource_list[i].data, datasource_list[i].data)
 
 
 ## Build Live Plot:
-curdoc().add_root(p)
+# curdoc().add_root(p)
+
+curdoc().add_root(column(figure_list))
+
 
 # Add a periodic callback to be run every 2000 milliseconds
 curdoc().add_periodic_callback(update_live_plot, 2000)
