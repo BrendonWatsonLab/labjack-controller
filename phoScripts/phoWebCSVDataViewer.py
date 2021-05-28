@@ -198,8 +198,8 @@ def update_live_plot(step):
 ## Build Live Plot:
 # curdoc().add_root(p)
 
-curdoc().add_root(column(figure_list, merge_tools=True))
-
+curdoc().add_root(column(figure_list))
+# In gridplots you can use ', merge_tools=True' property to combine tools
 
 # Add a periodic callback to be run every 2000 milliseconds
 curdoc().add_periodic_callback(update_live_plot, 2000)
