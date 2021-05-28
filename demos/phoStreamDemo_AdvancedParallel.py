@@ -191,5 +191,6 @@ def labjackAcqMain():
 
 	# advancedPlotResultFrame(datarun, channels)
 
+
 if __name__ == '__main__':
 	labjackAcqMain()

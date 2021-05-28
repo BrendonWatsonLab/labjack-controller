@@ -26,6 +26,8 @@ from bokeh.driving import linear
 # from random import random
 from random import random, randint
 
+csv_watch_path = "C:/Users/Pho/repos/labjack-controller/backup.csv"
+
 ## Function definitions:
 
 def print_row(row):
@@ -116,20 +118,41 @@ r2 = p.line([], [], color="navy", line_width=2)
 ds1 = r1.data_source
 ds2 = r2.data_source
 
+# @linear()
+# def update_live_plot(step):
+# 	ds1.data['x'].append(step)
+# 	ds1.data['y'].append(randint(0,100))
+# 	ds2.data['x'].append(step)
+# 	ds2.data['y'].append(randint(0,100))  
+# 	ds1.trigger('data', ds1.data, ds1.data)
+# 	ds2.trigger('data', ds2.data, ds2.data)
+
+
 @linear()
 def update_live_plot(step):
-	ds1.data['x'].append(step)
-	ds1.data['y'].append(randint(0,100))
-	ds2.data['x'].append(step)
-	ds2.data['y'].append(randint(0,100))  
+	read_df = pd.read_csv(csv_watch_path)
+
+	print(read_df.columns)
+	# Get python dictionary from dataframe:
+	new_data = dict()
+	new_data['x'] = read_df['System Time']
+	new_data['y'] = read_df['AIN0']
+
+	ds1.data = new_data
+
+	# ds1.data['x'].append(step)
+	# ds1.data['y'].append(randint(0,100))
+	# ds2.data['x'].append(step)
+	# ds2.data['y'].append(randint(0,100))  
 	ds1.trigger('data', ds1.data, ds1.data)
 	ds2.trigger('data', ds2.data, ds2.data)
+
 
 ## Build Live Plot:
 curdoc().add_root(p)
 
-# Add a periodic callback to be run every 500 milliseconds
-curdoc().add_periodic_callback(update_live_plot, 500)
+# Add a periodic callback to be run every 2000 milliseconds
+curdoc().add_periodic_callback(update_live_plot, 2000)
 
 
 
