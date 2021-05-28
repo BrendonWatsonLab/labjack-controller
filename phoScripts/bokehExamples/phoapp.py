@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 from labjackcontroller.labtools import LabjackReader
 
 from multiprocessing.managers import BaseManager
-from multiprocessing import Process
+from multiprocessing import Process, freeze_support
 
-from table_logger import TableLogger
+# from table_logger import TableLogger
 # tbl = TableLogger(columns='a,b,c,d')
 # tbl = TableLogger(columns=["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3","TIME","SYSTEM_TIME"].join(','))
 
@@ -144,7 +144,7 @@ columns_string = "{},TIME,SYSTEM_TIME".format(','.join(channels))
 print('columns_string: {}'.format(columns_string))
 
 active_csv_file = open("liveData.csv", "wb")
-tbl = TableLogger(file=active_csv_file, csv=True, columns=columns_string)
+# tbl = TableLogger(file=active_csv_file, csv=True, columns=columns_string)
 
 
 
@@ -172,8 +172,7 @@ def mainRun():
                         kwargs={'resolution': 1, 'scans_per_read': 1, 'callback_function': on_labjack_data_row_received})
 
     #    Declare a data backup process
-    backup_proc = Process(target=backup, args=(my_lj, "backup.csv",
-                                            duration))
+    backup_proc = Process(target=backup, args=(my_lj, "backup.csv", duration))
 
     #    Declare a bokeh webserver process
     # bokeh_proc = Process(target=startWebServerCallback, args=())
@@ -207,6 +206,7 @@ def mainRun():
 # mainRun()
 
 if __name__ == '__main__':
+    freeze_support()
     mainRun()
 
 
