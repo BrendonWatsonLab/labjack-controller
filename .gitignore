@@ -4,3 +4,5 @@ demos/*.html
 .vscode
 **/__pycache__
 phoScripts/final_backup.csv
+_build
+*.csv

@@ -48,16 +48,20 @@ def backup(labjack: LabjackReader, basename: str, num_seconds: int) -> None:
 	start_time = time.time()
 	# Write data until time is up.
 	while time.time() - start_time <= num_seconds:
+		time.sleep(0.25) # Waste a second before updating the .csv again
 		curr_time = time.time()
 		curr_rel_time = curr_time - start_time
 		# if not (curr_rel_time) % 60:
 		# if (curr_rel_time) % 60:
-		print("Backup at", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
+		
 		curr_df = labjack.to_dataframe()
-		print(curr_df)
-		curr_df.to_pickle(basename + '.pkl')
-		curr_df.to_csv((basename + '.csv'), encoding='utf-8', index=False)
-
+		if (len(curr_df.columns) > 2):
+			# print(curr_df)
+			# curr_df.to_pickle(basename + '.pkl')
+			print("Backup at", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
+			curr_df.to_csv((basename + '.csv'), encoding='utf-8', index=False)
+		else:
+			print('\t Input not set up yet at', time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
 
 
 
