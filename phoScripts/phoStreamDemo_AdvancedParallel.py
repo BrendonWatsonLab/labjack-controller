@@ -108,15 +108,16 @@ def backup(labjack: LabjackReader, filename: str, num_seconds: int) -> None:
 
 
 
-def on_labjack_data_row_received(row):
+def on_labjack_data_row_received(row) -> None:
     # global to_write_queue
-    print(row)
+    # print(row)
     # Output to CSV:
     # tbl(row[:])
     
     # Build a dataframe out of the row:
     # row_df = pd.DataFrame(row, columns=csv_header_columns)
-    # print(row_df)
+    row_df = pd.DataFrame(row)
+    print(row_df)
     # to_write_queue.put(row_df) # Add the row to the write queue
     # writer()
     
