@@ -57,6 +57,41 @@ def backup(labjack: LabjackReader, basename: str, num_seconds: int) -> None:
 		curr_df = labjack.to_dataframe()
 		if (len(curr_df.columns) > 2):
 			# print(curr_df)
+			# Convert the analog columns into digital
+			# print("test channels access: {}\n should_discretize: {}".format(channels, should_discretize_analog_channel))
+			# curr_df[
+			# curr_df[should_discretize_analog_channel]
+			# curr_df[:num_channels] = (curr_df[:num_channels] > 2.5)
+
+			## TODO: See https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy to fix annoying error
+			
+			# sub_df = curr_df.iloc[:, 0:num_channels]
+			
+			sub_df = curr_df.iloc[:, 0:4] # TODO: hardcoded the analog channels 0:4
+
+			# should_discretize_analog_channel
+
+			# sub_df = curr_df.iloc[:, 0:num_channels].copy()
+			# print("test: {}".format(sub_df))
+			found_idx = sub_df.gt(2.5).copy()
+			# print("test: {}".format(sub_df.gt(2.5)))
+
+			# This should update curr_df too, since sub_df is not a copy
+			# sub_df.iloc[sub_df.gt(2.5)] = 1
+			sub_df.iloc[found_idx] = 1
+			sub_df.iloc[~found_idx] = 0
+			
+
+			
+
+			# curr_df.iloc[sub_df.gt(2.5)] = 1
+			# print("test: {}".format(curr_df[[channels]].gt(2.5)))
+
+
+			# print("test: {}".format(curr_df[:num_channels].gt(2.5)))
+
+			
+
 			# curr_df.to_pickle(basename + '.pkl')
 			print("Backup at", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
 			curr_df.to_csv((basename + '.csv'), encoding='utf-8', index=False)
@@ -142,7 +177,7 @@ def advancedPlotResultFrame(df, ports):
 device_type = "T7"
 connection_type = "USB"
 duration = 15  # seconds
-freq = 20  # sampling frequency in Hz
+freq = 100  # sampling frequency in Hz
 # channels = ["AIN0", "AIN1", "AIN2", "AIN3"]
 channels = ["AIN0", "AIN1", "AIN2", "AIN3", "FIO0", "FIO1", "FIO2", "FIO3"] # Pho Home Testing Port Config
 # channels = ["EIO0", "EIO1", "EIO2", "EIO3", "EIO4", "EIO5", "EIO6", "EIO7", "AIN0"] # BB-16 Port config
@@ -150,6 +185,9 @@ num_channels = len(channels)
 
 analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
 # analog_voltages = [10.0]  # i.e. read input analog_voltages from -10 to 10 volts, only used for analog voltages
+
+# should_discretize_analog_channel = [True] * num_channels
+should_discretize_analog_channel = [True, True, True, True, False, False, False, False]
 
 # BaseManagers can be used to share complex objects, attributes and all, across multiple processes.
 BaseManager.register('LabjackReader', LabjackReader)
