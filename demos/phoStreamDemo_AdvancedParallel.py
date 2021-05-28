@@ -154,7 +154,7 @@ analog_voltages = [10.0, 10.0, 10.0, 10.0]  # i.e. read input analog_voltages fr
 # BaseManagers can be used to share complex objects, attributes and all, across multiple processes.
 BaseManager.register('LabjackReader', LabjackReader)
 
-if __name__ == '__main__':
+def labjackAcqMain():
 	manager = BaseManager()
 	manager.start()
 
@@ -191,21 +191,5 @@ if __name__ == '__main__':
 
 	# advancedPlotResultFrame(datarun, channels)
 
-
-
-	# # Instantiate a LabjackReader
-	# start = time.time_ns()
-
-	# with LabjackReader("T7") as my_lj:
-	#     my_lj.collect_data(channels, analog_voltages, duration, frequency)
-
-	#     # my_lj.collect_data(channels, analog_voltages, duration, frequency, 
-	#     #                     callback_function=print_row, num_threads=16)
-
-	#     datarun_source = my_lj.to_dataframe()
-	#     print("Actual time took: %f seconds" % ((time.time_ns() - start) / 1e9))
-
-	#  # Get the data we collected.
-	# print(datarun_source)
-
-	# plotResultFrame(datarun_source)
+if __name__ == '__main__':
+	labjackAcqMain()
